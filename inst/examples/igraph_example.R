@@ -4,7 +4,7 @@ library(dplyr)
 library(RBioFabric)
 
 bfGraph = graph.tree(20, children=2, mode="out")
-bfGraph <- autoNameForFabric(bfGraph)
+bfGraph <- RBioFabric:::autoNameForFabric(bfGraph)
 startAtBF1 <- function(bfGraph) {
   return (defaultNodeOrder(bfGraph, firstLabel=V(bfGraph)[1]$name))
 }
@@ -36,7 +36,7 @@ bioFabric_htmlwidget(
   bioFabric(
     karate
     , userOrder = 
-      data.frame(membership = membership(fc), degree = degree(karate)) %>%
+      data.frame(membership = unclass(membership(fc)), degree = degree(karate)) %>%
         mutate( id = rownames(.) ) %>%
         arrange( membership, desc( degree ) ) %>%
         select( id ) %>%

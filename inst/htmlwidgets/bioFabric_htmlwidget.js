@@ -19,7 +19,9 @@ HTMLWidgets.widget({
     x.data.nodes = HTMLWidgets.dataframeToD3(x.data.nodes);
     x.data.links = HTMLWidgets.dataframeToD3(x.data.links);
     
-    fabric( x.data, {container: el, zoomMin: x.options.zoomMin, zoomMax: x.options.zoomMax} );
+    var chart = fabric( x.data, {container: el, zoomMin: x.options.zoomMin, zoomMax: x.options.zoomMax} );
+    
+    instance = chart;
 
   },
 

@@ -22,6 +22,9 @@ var fabric = (function(){
   var NODE_WIDTH = 3
   var WRAP_LOC_X = .87
   
+  // will use this to dispatch events
+  var dispatch = d3.dispatch("mouseover","mouseout");
+  
   var tagOrder = [
     "EX-blue",
     "EX-orange",
@@ -179,6 +182,8 @@ var fabric = (function(){
     colorNodesAndLinks(svg, 1.43)
     fitGraph( svg )
     attachEvents( svg )
+    
+    return dispatch;
   }
   
   ///////////////////////////////////////////////////////////////////
@@ -391,15 +396,23 @@ var fabric = (function(){
       
     function highlight(e){
       var id;
+      var eventdata = {};
       var target = d3.select(this);
       
       if(!target.classed("glyph") && !target.classed("glyph2")){
         id = e.index;
-      } else if(target.classed("glyph")) {
+        eventdata = {sourcename: e.name, targetname: null, classed: target.attr("class")};
+      } else {
+        eventdata = {sourcename: e.source.name, targetname: e.target.name, classed: target.attr("class")};
+      }
+      if(target.classed("glyph")) {
         id = e.source.index;
-      } else if(target.classed("glyph2")) {
+      }
+      if(target.classed("glyph2")) {
         id = e.target.index;
       }
+      
+      dispatch.mouseover(eventdata);
 
       mySvg.selectAll('.linkB,.linkF,.node,.glyph,.glyph2')[0]
         .map(function(d){
@@ -427,6 +440,17 @@ var fabric = (function(){
     }
     
     function unhighlight(e){
+      var target = d3.select(this);
+      var eventdata = {};
+      
+      if(!target.classed("glyph") && !target.classed("glyph2")){
+        eventdata = {sourcename: e.name, targetname: null, classed: target.attr("class")};
+      } else {
+        eventdata = {sourcename: e.source.name, targetname: e.target.name, classed: target.attr("class")};
+      }
+      
+      dispatch.mouseout(eventdata);
+      
       mySvg.selectAll('.linkB,.linkF,.node,.glyph,.glyph2')
         .style("stroke-width","3px")
         .style("opacity","0.98")
